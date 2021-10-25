@@ -1,0 +1,60 @@
+# Test EBS FileZilla Information
+	IP			:	192.168.1.87
+	UserName	:	oracle
+	Password	:	testoraclesg
+	Port		:	22
+
+# Test EBS DB Information
+	UserName	:	apps
+	Password	:	apps
+	sid			:	prodpdb
+
+# Test EBS System Administrator Information
+	UserID		:	8514
+	Password	:	Imam123
+	UserID		:	8577
+	Password	:	247562
+
+# Customized report path
+	'/u01/install/APPS/fs1/EBSapps/appl/xxpwc/12.0.0/reports/US'
+# Forms Path
+	'/u01/install/APPS/fs1/EBSapps/appl/au/12.0.0/forms/US'
+# pll & plx path
+	'/u01/install/APPS/fs1/EBSapps/appl/au/12.0.0/resource'
+
+# Custom Report Development
+	ReportName	:	Returnable Gatepass - SG - Customized Report - ICT
+	FileName	:	XXSG_RETURNABLE_GP_REPORT
+	ShortName	:	XXSG_RETURNABLE_GP_REPORT
+	
+# Grant Read/Write to Standard Form
+	chmod +rwx APPSTAND.fmb
+	chmod +rwx APSTAND.fmb
+	
+# ENV Bash
+	. /u01/install/APPS/EBSapps.env
+
+# Forms Compilation
+	frmcmp_batch userid=apps/apps module=/u01/install/APPS/fs1/EBSapps/appl/au/12.0.0/forms/US/XXSG_PI_ALLOCATION.fmb output_file=/u01/install/APPS/fs1/EBSapps/appl/ont/12.0.0/forms/US/XXSG_PI_ALLOCATION.fmx module_type=form batch=no compile_all=special
+	
+#Oracle Apps Developer Guide
+https://docs.oracle.com/cd/E26401_01/doc.122/e22961/toc.htm
+
+# Outlook Attachment Location 
+	C:/Users/ShowkotHasan/AppData/Local/Microsoft/Windows/INetCache/Content.Outlook/
+	C:/Users/ShowkotHasan/AppData/Roaming/Microsoft/Signatures
+	
+showkothasan@nice-denim.com
+pass:- Showkothasan@321
+
+#APEX Integration in EBS 12.2
+https://support.oracle.com/epmos/faces/DocumentDisplay?_afrLoop=601943986102722&id=1306563.1&_afrWindowMode=0&_adf.ctrl-state=12r5zugsk5_4
+
+
+10.0.3.3 --DB
+10.0.3.2 --APPS
+conn system/sys@192.168.1.87:1521/prodpdb as sysdba
+conn sys/Manager123@192.168.1.87:1521/prodpdb as sysdba
+
+export ORACLE_SID=PROD
+. /u01/install/APPS/19.0.0/PRODPDB_testebs.env testebs

@@ -1,0 +1,218 @@
+--ORG LOV
+SELECT NAME, ORGANIZATION_ID
+  FROM HR_ORGANIZATION_UNITS
+ WHERE LOCATION_ID IS NOT NULL
+ORDER BY 1;
+
+--Legal Entity
+SELECT NAME ORGANIZATION_NAME, ORGANIZATION_ID from HR_ORGANIZATION_V hou, xle_entity_profiles xep where hou.LEGAL_ENTITY_ID = xep.LEGAL_ENTITY_ID
+
+--Concatinated Segment
+select fnd_flex_ext.get_segs('GL', 'GL#', CHART_OF_ACCOUNTS_ID, CODE_COMBINATION_ID) from gl_code_combinations
+
+select DESCRIPTION, SEGMENT1
+from fnd_flex_values_vl ffvv, gl_code_combinations gcc
+where FFVV.FLEX_VALUE = gcc.SEGMENT1;
+
+--For Natural Account
+select DESCRIPTION
+from fnd_flex_values_vl ffvv, gl_code_combinations gcc
+where FFVV.FLEX_VALUE = gcc.SEGMENT4;
+
+--All Party LOV
+SELECT PARTY_NAME, PARTY_ID FROM HZ_PARTIES;
+
+--Supplier LOV
+SELECT HP.PARTY_NAME, HP.PARTY_ID
+  FROM HZ_PARTIES HP, POZ_SUPPLIERS PS
+ WHERE HP.PARTY_ID = PS.PARTY_ID
+ORDER BY 1;
+
+--Supplier Site Code LOV
+SELECT DISTINCT VENDOR_SITE_CODE
+    FROM POZ_SUPPLIER_SITES_ALL_M
+ORDER BY 1;
+
+--Company LOV
+SELECT DISTINCT GCC1.SEGMENT1, FFV2.DESCRIPTION
+    FROM GL_CODE_COMBINATIONS GCC1, FND_FLEX_VALUES_VL FFV2
+   WHERE GCC1.SEGMENT1 = FFV2.FLEX_VALUE
+ORDER BY 1;
+
+--Sales Person Query
+select jrdv.RESOURCE_NAME from jtf_rs_defresources_v jrdv, RA_SALESREPS_ALL rsa
+where rsa.RESOURCE_ID	=	jrdv.RESOURCE_ID
+and rsa.SALESREP_ID		=	:SALE_PERSON_ID;
+
+--User ID, Login User Query
+select FND_GLOBAL.USER_GUID, FND_GLOBAL.USER_NAME from dual;
+select FND_GLOBAL.USER_NAME from dual;
+
+select * from fnd_user usr, per_people_f per where usr.employee_id = pr.person_id;
+
+--Cloud Date Format
+TO_DATE(TO_CHAR(ACRA.RECEIPT_DATE,'dd-MM-yyyy','NLS_DATE_LANGUAGE =ENGLISH'),'dd-MM-yyyy','NLS_DATE_LANGUAGE =ENGLISH')BETWEEN
+	TO_DATE(TO_CHAR(:P_DATE_FROM,'dd-MM-yyyy','NLS_DATE_LANGUAGE =ENGLISH'),'dd-MM-yyyy','NLS_DATE_LANGUAGE =ENGLISH') AND
+	TO_DATE(TO_CHAR(:P_DATE_TO,'dd-MM-yyyy','NLS_DATE_LANGUAGE = ENGLISH'),'dd-MM-yyyy','NLS_DATE_LANGUAGE =ENGLISH')
+
+--EBS Date Format
+TO_CHAR(TRUNC(mmt.TRANSACTION_DATE),'YYYY/MM/DD HH24:MI:SS') BETWEEN 
+    NVL(:P_DATE_FROM,TO_CHAR(TRUNC(mmt.TRANSACTION_DATE),'YYYY/MM/DD HH24:MI:SS')) AND
+    NVL(:P_DATE_TO,TO_CHAR(TRUNC(mmt.TRANSACTION_DATE),'YYYY/MM/DD HH24:MI:SS'))
+	
+--EBS Message Show
+fnd_message.set_string('Request Submitted :' || ln_request_id ||'. Please Wait ... ');
+fnd_message.show;
+
+--Submit Request from Form
+DECLARE
+   ln_request_id     NUMBER;
+   xml_layout		 boolean;
+   lv_flag 			 char(1);
+   statuscode 		 char(1);
+   phasecode 		 char(1);
+   
+BEGIN
+	xml_layout := FND_REQUEST.ADD_LAYOUT(   'XXPWC','XXSG_PI_INFORMATION','en','US','PDF');
+	ln_request_id := APPS.FND_REQUEST.SUBMIT_REQUEST
+                     ('XXPWC',                    -- Application Short Name
+                      'XXSG_PI_INFORMATION',      -- program short name
+                      'XXSG_PI_INFORMATION',      -- description   
+                      sysdate,	                  -- start time
+                      FALSE,      	              -- sub request
+                      :PI_HEADER.PI_NUMBER);      -- User Parameter used in Report.
+   COMMIT;
+   IF ln_request_id = 0
+   THEN
+      message ('Concurrent request failed to submit');
+   END IF;
+   fnd_message.set_string('Request Submitted :' || ln_request_id ||'. Please Wait ... ');
+	 fnd_message.show;
+	 if ln_request_id is not null then
+    loop
+      exit when lv_flag = 'Y';
+      select status_code, phase_code
+          into statuscode, phasecode
+        from fnd_concurrent_requests
+        where request_id = ln_request_id;     
+          if phasecode = 'C' then
+         lv_flag := 'Y';
+         end if;
+    end loop;
+	 end if;
+	 if lv_flag = 'Y' then
+		editor_pkg.report(ln_request_id, 'Y');
+	end if;
+END;
+
+
+--with clause example
+with 
+ data as (
+select NAME val from HR_OPERATING_UNITS 
+),
+ find_initials as (
+ select val, substr(val,instr(' '||val,' ',1,column_value),1) i
+from data,
+ table(cast(multiset(select level word from dual 
+                               connect by level <= length(val)-length(replace(val,' ',''))+1
+               ) as sys.odcinumberlist))
+    where substr(val,instr(' '||val,' ',1,column_value),1) != '('
+     )
+  select val, replace(listagg(i),',') initials
+ from find_initials
+ group by val
+ order by val
+
+--Call another form from EBS form
+begin
+FND_FUNCTION.EXECUTE
+                   (function name in varchar2,
+                    open flag in varhcar2 default ‘y’
+                    session_flag in varhcar2 default’session’
+                   other_params in varchar2 default null);
+FND_FUNCTION.EXECUTE
+        (function_name => 'XXSG_PI_CREATION',
+         open_flag     => 'Y',
+         session_flag  => 'NO_SESSION',--'Y',        
+         other_params  => 'PI_ID='||p_id);
+end;
+ 
+ --DBMS_SCHEDULER Example
+ BEGIN
+ --Create Scheduler Program
+  DBMS_SCHEDULER.create_program(
+  program_name => 'RUN_MY_PROCEDURE',
+  program_type => 'STORED_PROCEDURE',
+  program_action => 'OWNER.PROCRDURE_NAME',
+  number_of_arguments => 1,
+  enabled => FALSE,
+  comments => 'Program to run a stored procedure');
+--Pass parameter to the procedure if need
+  DBMS_SCHEDULER.define_program_argument(
+   program_name => 'RUN_MY_PROCEDURE',
+   argument_name => 'FIRST_PARAM',
+   argument_position => 1,
+   argument_type => 'VARCHAR2',
+   default_value => 'SYS');
+
+  DBMS_SCHEDULER.enable (name=>'RUN_MY_PROCEDURE');
+END;
+/
+
+--Scheduler when program will run
+BEGIN
+DBMS_SCHEDULER.create_schedule (
+  schedule_name => 'DAILY_SCHEDULE',
+  start_date => SYSTIMESTAMP,
+  repeat_interval => 'freq=daily; byhour=14; byminute=15; bysecond=0;',
+  end_date => NULL,
+  comments => 'Run every day at 02:15 PM');
+END;
+/
+
+--Job to run my program in schedule time
+BEGIN
+DBMS_SCHEDULER.create_job (
+  job_name => 'MY_SCHEDULE_JOB',
+  program_name => 'RUN_MY_PROCEDURE',
+  schedule_name => 'DAILY_SCHEDULE',
+  enabled => TRUE,
+  comments => 'Job to run OWNER.PROCRDURE_NAME daily');
+END;
+/
+
+--Unlock APEX Admin
+BEGIN
+   apex_util.set_security_group_id(p_security_group_id => 10);
+   apex_util.unlock_account(p_user_name => 'ADMIN');
+END;
+/
+COMMIT;
+
+--Change APEX ADMIN Password
+UPDATE APEX_190200.Wwv_Flow_Fnd_User
+    SET Web_Password = 'Saad@123'
+    WHERE User_Name = 'ADMIN'
+    AND Security_Group_Id = 10;
+    COMMIT;
+--Case in BI Publisher Desktop
+
+<?choose:?>
+
+<?when:CURRENCY1='USD'?>'$'<?UNIT_SELLING_PRICE?><?end when?>
+
+<?when:CURRENCY1='BDT'?>'৳' <?UNIT_SELLING_PRICE?><?end when?>
+
+<?otherwise:?><?UNIT_SELLING_PRICE?><?end otherwise?>
+
+<?end choose?>
+
+--Check Row lock and UNLOCK
+select a.username us, a.osuser os, a.sid, a.serial#
+from v$session a, v$locked_object b, dba_objects c
+where upper(c.object_name) = upper('&tbl_name')
+and b.object_id = c.object_id
+and a.sid = b.session_id;
+
+alter system kill session 'sid,serial#';

@@ -1,0 +1,102 @@
+Purchase Order(PO):
+---------------------
+1.po_requisition_headers_all   -- requisition header info
+2.po_requisition_lines_all        -- Requisition Lines info
+3.po_req_distributions_all      -- Requisition Distribution info
+4.po_headers_all                   -- PO Header Info
+5.po_lines_all                         -- PO Line Info
+6.po_line_locations_all           -- PO Line Shipment info
+7.po_distributions_all             -- PO Distribution info
+8.rcv_shipment_headers         -- Receiving header info
+9.rcv_shipment_lines              -- Receiving Lines info
+10.rcv_transactions                -- Receiving transationd info
+11.po_vendors                      -- Supplier Header info
+12.po_vendor_sites_all          -- Supplier Site info
+13.po_vendor_site_contacts  -- Supplier Site Contact info
+14.hr_locations                      -- Supplier Site Address
+
+Order Management (OM):
+---------------------------
+1.oe_order_headers_all             -- Order Header info
+2.oe_order_lines_all                  -- Order line info
+3.oe_transaction_types_tl          -- Order type info
+4.oe_order_holds                      -- Order Hold info
+4.oe_holds_all                           -- Order Hold info
+5.oe_hold_sources                    -- Order Hold source info
+6.oe_hold_releases                    -- Hold Release info
+7.wsh_delivery_details               -- Delivery Detial Info
+8.wsh_new_deliveries                -- Delivery Header info
+9.wsh_delivery_Assignments      -- Delivery Assignments info
+10.wsh_trip_stops                      -- Delivery trips info
+11.hz_cust_accounts                  -- Customer info
+12.hz_parties                              -- Party info
+13.hz_cust_site_uses_all             -- Customer site use info
+14.hz_cust_acct_sites_all           -- Customer Site Acct info
+15.hz_party_sites                       -- Party site info
+16.hz_locations                          -- Customer Site Adderess
+17.wsh_lookups                        -- Shipping lookup info
+
+
+Accounts Payable(AP):
+-----------------------
+1.ap_invoices_all                               -- Invoice Header info
+2.ap_invoice_distributions_all            -- Invoice Line info
+3.ap_checks_all                                -- Check info
+4.ap_invoice_payments_all                -- Invoice Payment info
+5.ap_payment_schedules_all             -- Payment Schedule info
+6.ap_holds_all                                  -- Invoice Holds info
+7.ap_lookup_codes                          -- Payable lookup info
+8.po_vendors                                   -- Supplier Header info
+9.po_vendor_sites_all                       -- Supplier Site info
+10.po_vendor_site_contacts             -- Supplier Site Contact info
+11.hr_locations                                -- Supplier Site Address
+12.ap_banks                                   -- Bank Info
+13.ap_bank_branches                     -- Bank Branch info
+14.ap_ae_headers_all                     -- Accounitng header info
+15.ap_ae_lines_all                          -- Accounting Lines info
+16.ap_ae_accounting_evets            -- Accounting events info
+17.ap_terms                                   -- Payment Terms
+
+Accounts Receivables(AR):
+---------------------------
+1.ra_customer_trx_all                   -- Receivable transaction info
+2.ra_customer_trx_lines_all          -- Transaction lines info
+3.ra_cust_trx_line_gl_dist_all       -- Transaction distribution info
+4.ar_receivable_applications_all   -- Receiving application info
+5.ar_cash_Receipts_all                -- Cash Receipt info
+6.ar_terms                                   -- Receivable Terms
+7.hz_cust_accounts                     -- Customer info
+8.hz_parties                                -- Party info
+9.hz_cust_site_uses_all               -- Customer site use info
+10.hz_cust_acct_sites_all            -- Customer Site Acct info
+11.hz_party_sites                        -- Party site info
+12.hz_locations                   -- Customer Site Adderess
+
+InvenvtoryModule(INV):
+-------------------------
+1.mtl_System_items_b              -- Master item info
+2.mtl_onhand_quanitties            -- Item onhand qty info
+3.mtl_reservations                     -- Item Reservation info
+4.mtl_material_transactions       -- Item Transaction info
+5.mtl_item_locations                 -- Item location info
+6,mtl_Categeries                      -- Item Category info
+7.mtl_item_categories              -- Invemtry Categry
+8.mtl_secondary_inventories    -- Subinventories info
+9.org_organization_definitions  -- Organizaition info
+10.mtl_transaction_Accounts   -- Item Transaction info
+11.mtl_txn_source_types         -- Item Transaction sources
+12.mtl_parameters                  -- Inventory Parameters
+
+General Ledger(GL) :
+--------------------
+
+1.gl_je_headers               -- Journal Header info
+2.gl_je_lines                    -- Journal Line info
+3.gl_je_batches               -- Journal Batch info
+4.gl_Sets_of_books        -- set of books info
+5.gl_chart_of_accoutns   -- chart of accounts info
+6.gl_code_combinations  -- Code combination info
+7.gl_je_sources               -- Journal Source info
+8.gl_je_categories           -- Journal Cateogiy info
+9.fnd_currencies             -- Currency info
+10.gl_balances               -- Journal Balances
